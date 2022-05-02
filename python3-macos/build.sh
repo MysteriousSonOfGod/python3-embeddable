@@ -6,14 +6,16 @@ set -x
 # Install requirements
 brew install xz openssl
 
-if [ $ARCH = "x86_64" ] || [ $ARCH = "universal2" ]; then
-    echo "Building Python for $ARCH"
-    mkdir $ARCH    
-    cd $ARCH
-else
-    echo "Unsupported platform"
-    exit 1
-fi
+#if [ $ARCH = "x86_64" ] || [ $ARCH = "universal2" ]; then
+#    echo "Building Python for $ARCH"
+#    mkdir $ARCH    
+#    cd $ARCH
+#else
+#    echo "Unsupported platform"
+#    exit 1
+#fi
+
+COMMON_ARGS="--arch ${ARCH:-universal2}"
 
 # Initialize variables
 THIS_DIR="$PWD"
@@ -38,12 +40,20 @@ popd
 
 pushd $PY_SRC_DIR
 
-# Configure and make Python from source
-if [ $ARCH = "universal2" ]; then
-  ./configure --prefix=/usr "$@" --enable-shared --enable-universalsdk --with-universal-archs=universal2 --with-openssl=$(brew --prefix openssl)
-else
-  ./configure --prefix=/usr "$@" --enable-shared --with-openssl=$(brew --prefix openssl)
-fi
+# Install dependencies
+which python
+python -m pip install dataclasses
+
+# Copy build tools to the Python's source dir
+cp -r MacOS $SRCDIR
+
+# Build the Python dependencies
+./MacOS/build_deps.py $COMMON_ARGS
+
+#Configure the Python compilation
+./MacOS/configure.py $COMMON_ARGS --prefix=/usr "$@"
+
+# Make Python from source
 make
 make install DESTDIR="$THIS_DIR/build"
 

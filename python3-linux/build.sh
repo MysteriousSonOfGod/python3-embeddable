@@ -5,7 +5,7 @@ set -x
 
 # Initialize variables
 THIS_DIR="$PWD"
-PY_SRC_DIR=src/Python-$PYVER
+SRCDIR=src/Python-$PYVER
 
 # Clear the last build
 if [ -d src ]; then rm -Rf src; fi
@@ -24,7 +24,8 @@ popd
 
 # ---------------- #
 
-pushd $PY_SRC_DIR
+cp -r MacOS $SRCDIR
+pushd $SRCDIR
 
 # Configure and make Python from source
 ./configure --prefix=/usr "$@" --enable-shared
