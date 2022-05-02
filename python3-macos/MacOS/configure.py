@@ -7,6 +7,10 @@ def main():
     args, remaining = parse_args()
     os.environ.update(env_vars(args.target_arch_name))
 
+    conf_args = ARCHITECTURES[args.target_arch_name].CONF_ARGS
+    if conf_args is None:
+        conf_args = []
+
     cmd = [
         'bash', 
             './configure',
