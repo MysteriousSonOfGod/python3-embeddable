@@ -34,7 +34,8 @@ popd
 # ---------------- #
 
 # Copy our custom build-script to the BuildScript folder
-yes | cp ../MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript/
+rm -f $PY_SRC_DIR/Mac/BuildScript/build-installer.py
+cp ../MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript/
 
 pushd $PY_SRC_DIR
 
