@@ -19,7 +19,7 @@ COMMON_ARGS="--arch ${ARCH:-universal2}"
 
 # Initialize variables
 THIS_DIR="$PWD"
-PY_SRC_DIR=src/Python-$PYVER
+SRCDIR=src/Python-$PYVER
 
 # Clear the last build
 if [ -d src ]; then rm -Rf src; fi
@@ -38,14 +38,14 @@ popd
 
 # ---------------- #
 
-pushd $PY_SRC_DIR
+# Copy build tools to the Python's source dir
+cp -R MacOS $SRCDIR
+
+pushd $SRCDIR
 
 # Install dependencies
 which python
 python -m pip install dataclasses
-
-# Copy build tools to the Python's source dir
-cp -r MacOS $SRCDIR
 
 # Build the Python dependencies
 ./MacOS/build_deps.py $COMMON_ARGS
