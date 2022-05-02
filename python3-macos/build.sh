@@ -4,22 +4,20 @@ set -e
 set -x
 
 # Install requirements
-brew install xz #openssl
+brew install xz openssl
 
-#if [ $ARCH = "x86_64" ] || [ $ARCH = "universal2" ]; then
-#    echo "Building Python for $ARCH"
-#    mkdir $ARCH    
-#    cd $ARCH
-#else
-#    echo "Unsupported platform"
-#    exit 1
-#fi
-
-COMMON_ARGS="--arch ${ARCH:-universal2}"
+if [ $ARCH = "x86_64" ] || [ $ARCH = "universal2" ]; then
+    echo "Building Python for $ARCH"
+    mkdir $ARCH    
+    cd $ARCH
+else
+    echo "Unsupported platform"
+    exit 1
+fi
 
 # Initialize variables
 THIS_DIR="$PWD"
-SRCDIR=src/Python-$PYVER
+PY_SRC_DIR=src/Python-$PYVER
 
 # Clear the last build
 if [ -d src ]; then rm -Rf src; fi
@@ -38,27 +36,21 @@ popd
 
 # ---------------- #
 
-# Copy build tools to the Python's source dir
-cp -R MacOS $SRCDIR
+# Copy our custom build-script to the BuildScript folder
+yes | cp /MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript
 
-pushd $SRCDIR
+pushd $PY_SRC_DIR
 
-# Install dependencies
-which python
-python -m pip install dataclasses
-
-# Build the Python dependencies
-./MacOS/build_deps.py $COMMON_ARGS
-
-#Configure the Python compilation
-./MacOS/configure.py $COMMON_ARGS --prefix=/usr "$@"
-
-# Make Python from source
-make
-make install DESTDIR="$THIS_DIR/build"
+# Runs the build-script
+if [ $ARCH = "universal2" ]; then
+  python3 Mac/BuildScript/build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=10.6 --universal-archs=universal2
+else
+  python3 Mac/BuildScript/build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=10.6
+fi
 
 popd
 
 # Create the embeddable dir and moves Python distribution into it
+PYSIMPLEVER=$(cut -d '.' -f 1,2 <<< "$PYVER")
 mkdir -p embedabble
-mv build/usr/* embedabble
+mv "build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER/*" embedabble
