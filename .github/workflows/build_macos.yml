@@ -32,7 +32,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
-     name: Update scripts permission
+    - name: Update scripts permission
       run: |        
         find -type f -iname "*.sh" -exec chmod +x {} \;
         find ./MacOS -type f -iname "*.py" -exec chmod +x {} \;
