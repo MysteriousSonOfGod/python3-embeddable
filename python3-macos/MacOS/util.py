@@ -11,17 +11,14 @@ SYSROOT = BASE / 'sysroot'
 @dataclass
 class Arch:
     MACOS_TARGET: str
-    CONF_PLAT_FLAGS: Optional[list] = None
-
-    @property
-    def binutils_prefix(self) -> str:
-        return self.BINUTILS_PREFIX or self.ANDROID_TARGET
+    CONF_ARGS: list = []
 
 
 ARCHITECTURES = {   
     'universal2': Arch('universal2', ['--enable-universalsdk', '--with-universal-archs=universal2']),
     'x86_64': Arch('x86_64',),
 }
+
 
 def env_vars(target_arch_name: str) -> Dict[str, str]:  
     env = {

@@ -8,9 +8,11 @@ def main():
     os.environ.update(env_vars(args.target_arch_name))
 
     cmd = [
-        'bash', './configure',
-        '--enable-shared',
-    ] + ARCHITECTURES[args.target_arch_name].CONF_PLAT_FLAGS
+        'bash', 
+            './configure',
+            '--enable-shared',
+            ' '.join(ARCHITECTURES[args.target_arch_name].CONF_ARGS)
+    ]  
 
     os.execvp('bash', cmd + remaining)
 

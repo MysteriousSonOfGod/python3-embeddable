@@ -95,6 +95,7 @@ class OpenSSL(Package):
                     # "enable-unit-test",
                     'shared', 
                     '--prefix=/usr', 
+                    '--libdir=/usr/lib',
                     '--openssldir=/etc/ssl', 
                     ])
 

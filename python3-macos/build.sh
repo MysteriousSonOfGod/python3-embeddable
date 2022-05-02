@@ -4,7 +4,7 @@ set -e
 set -x
 
 # Install requirements
-brew install xz openssl
+brew install xz #openssl
 
 #if [ $ARCH = "x86_64" ] || [ $ARCH = "universal2" ]; then
 #    echo "Building Python for $ARCH"
