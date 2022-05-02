@@ -34,8 +34,8 @@ jobs:
         python-version: 3.9
     - name: Update scripts permission
       run: |        
-        find -type f -iname "*.sh" -exec chmod +x {} \;
-        find ./MacOS -type f -iname "*.py" -exec chmod +x {} \;
+        find . -name "*.sh" -exec chmod +x {} \;
+        find ./MacOS -name "*.py" -exec chmod +x {} \;
     - name: Build Python
       run: |
         # Set env parameters
