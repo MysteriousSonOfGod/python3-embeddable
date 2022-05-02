@@ -11,7 +11,7 @@ SYSROOT = BASE / 'sysroot'
 @dataclass
 class Arch:
     MACOS_TARGET: str
-    CONF_ARGS: list = []
+    CONF_ARGS: Optional[list] = []
 
 
 ARCHITECTURES = {   
