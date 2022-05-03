@@ -7,8 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_macos_x86_64:
-    if: 1==2
+  build_macos_x86_64:    
     runs-on: macos-10.15
     defaults:
       run:
@@ -59,6 +58,7 @@ jobs:
         if-no-files-found: error
 
   build_macos_universal2:
+    if: 1==2
     runs-on: macos-latest
     defaults:
       run:
