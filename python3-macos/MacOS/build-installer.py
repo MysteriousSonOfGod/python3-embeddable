@@ -1197,6 +1197,7 @@ def buildPython():
     else:
         make_cmd = "make" + runshared_for_make
     print("Running " + make_cmd)
+    runCommand("make clean")
     runCommand(make_cmd)
 
     make_cmd = "make install DESTDIR=%s %s"%(
