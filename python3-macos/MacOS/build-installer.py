@@ -1144,7 +1144,7 @@ def buildPython():
                "%s "
                "%s "
                "%s "
-               #"%s "
+               "%s "
                "LDFLAGS='-g -L%s/libraries/usr/local/lib' "
                "CFLAGS='-g -I%s/libraries/usr/local/include' 2>&1"%(
         shellQuote(os.path.join(SRCDIR, 'configure')),
@@ -1157,7 +1157,7 @@ def buildPython():
                             shellQuote(WORKDIR)[1:-1],))[internalTk()],
         (' ', "--with-tcltk-libs='-L%s/libraries/usr/local/lib -ltcl8.6 -ltk8.6'"%(
                             shellQuote(WORKDIR)[1:-1],))[internalTk()],
-        #(' ', "--enable-optimizations --with-lto")[compilerCanOptimize()],
+        (' ', "--enable-optimizations --with-lto")[compilerCanOptimize()],
         shellQuote(WORKDIR)[1:-1],
         shellQuote(WORKDIR)[1:-1]))
 
@@ -1193,7 +1193,7 @@ def buildPython():
 
     make_extras = os.getenv("BUILDINSTALLER_BUILDPYTHON_MAKE_EXTRAS")
     if make_extras:
-        make_cmd = "make " + make_extras + runshared_for_make
+        make_cmd = "make clean " + make_extras + runshared_for_make
     else:
         make_cmd = "make" + runshared_for_make
     print("Running " + make_cmd)
