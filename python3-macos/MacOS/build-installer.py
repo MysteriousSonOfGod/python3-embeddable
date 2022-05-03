@@ -446,37 +446,37 @@ def pkg_recipes():
             required=False,
             selected='selected',
         ),
-        #dict(
-        #    name="PythonDocumentation",
-        #    long_name="Python Documentation",
-        #    topdir="/Library/Frameworks/Python.framework/Versions/%(VER)s/Resources/English.lproj/Documentation",
-        #    source="/pydocs",
-        #    readme="""\
-        #        This package installs the python documentation at a location
-        #        that is usable for pydoc and IDLE.
-        #        """,
-        #    postflight="scripts/postflight.documentation",
-        #    required=False,
-        #    selected='selected',
-        #),
-        #dict(
-        #    name="PythonProfileChanges",
-        #    long_name="Shell profile updater",
-        #    readme="""\
-        #        This packages updates your shell profile to make sure that
-        #        the Python tools are found by your shell in preference of
-        #        the system provided Python tools.
+        dict(
+            name="PythonDocumentation",
+            long_name="Python Documentation",
+            topdir="/Library/Frameworks/Python.framework/Versions/%(VER)s/Resources/English.lproj/Documentation",
+            source="/pydocs",
+            readme="""\
+                This package installs the python documentation at a location
+                that is usable for pydoc and IDLE.
+                """,
+            postflight="scripts/postflight.documentation",
+            required=False,
+            selected='selected',
+        ),
+        dict(
+            name="PythonProfileChanges",
+            long_name="Shell profile updater",
+            readme="""\
+                This packages updates your shell profile to make sure that
+                the Python tools are found by your shell in preference of
+                the system provided Python tools.
 
-        #        If you don't install this package you'll have to add
-        #        "/Library/Frameworks/Python.framework/Versions/%(VER)s/bin"
-        #        to your PATH by hand.
-        #        """,
-        #    postflight="scripts/postflight.patch-profile",
-        #    topdir="/Library/Frameworks/Python.framework",
-        #    source="/empty-dir",
-        #    required=False,
-        #    selected='selected',
-        #),
+                If you don't install this package you'll have to add
+                "/Library/Frameworks/Python.framework/Versions/%(VER)s/bin"
+                to your PATH by hand.
+                """,
+            postflight="scripts/postflight.patch-profile",
+            topdir="/Library/Frameworks/Python.framework",
+            source="/empty-dir",
+            required=False,
+            selected='selected',
+        ),
         dict(
             name="PythonInstallPip",
             long_name="Install or upgrade pip",
