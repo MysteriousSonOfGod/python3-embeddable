@@ -1723,18 +1723,18 @@ def main():
 
 
     # Prepare the applications folder
-    #folder = os.path.join(WORKDIR, "_root", "Applications", "Python %s"%(
-    #    getVersion(),))
-    #fn = os.path.join(folder, "License.rtf")
-    #patchFile("resources/License.rtf",  fn)
-    #fn = os.path.join(folder, "ReadMe.rtf")
-    #patchFile("resources/ReadMe.rtf",  fn)
-    #fn = os.path.join(folder, "Update Shell Profile.command")
-    #patchScript("scripts/postflight.patch-profile",  fn)
-    #fn = os.path.join(folder, "Install Certificates.command")
-    #patchScript("resources/install_certificates.command",  fn)
-    #os.chmod(folder, STAT_0o755)
-    #setIcon(folder, "../Icons/Python Folder.icns")
+    folder = os.path.join(WORKDIR, "_root", "Applications", "Python %s"%(
+        getVersion(),))
+    fn = os.path.join(folder, "License.rtf")
+    patchFile("resources/License.rtf",  fn)
+    fn = os.path.join(folder, "ReadMe.rtf")
+    patchFile("resources/ReadMe.rtf",  fn)
+    fn = os.path.join(folder, "Update Shell Profile.command")
+    patchScript("scripts/postflight.patch-profile",  fn)
+    fn = os.path.join(folder, "Install Certificates.command")
+    patchScript("resources/install_certificates.command",  fn)
+    os.chmod(folder, STAT_0o755)
+    setIcon(folder, "../Icons/Python Folder.icns")
 
     # Create the installer
     buildInstaller()
