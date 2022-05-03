@@ -3,12 +3,6 @@
 set -e
 set -x
 
-gcc --version
-brew upgrade gcc
-gcc --version
-
-sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
-
 if [ $ARCH = "x86_64" ] || [ $ARCH = "universal2" ]; then
     echo "Building Python for $ARCH"
     mkdir $ARCH    
@@ -44,8 +38,6 @@ rm -f $PY_SRC_DIR/Mac/BuildScript/build-installer.py
 cp ../MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript/
 
 pushd $PY_SRC_DIR
-
-#BUILDINSTALLER_BUILDPYTHON_MAKE_EXTRAS="clean"
 
 # Runs the build-script
 if [ $ARCH = "universal2" ]; then
