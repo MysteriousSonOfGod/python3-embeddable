@@ -446,37 +446,37 @@ def pkg_recipes():
             required=False,
             selected='selected',
         ),
-        dict(
-            name="PythonDocumentation",
-            long_name="Python Documentation",
-            topdir="/Library/Frameworks/Python.framework/Versions/%(VER)s/Resources/English.lproj/Documentation",
-            source="/pydocs",
-            readme="""\
-                This package installs the python documentation at a location
-                that is usable for pydoc and IDLE.
-                """,
-            postflight="scripts/postflight.documentation",
-            required=False,
-            selected='selected',
-        ),
-        dict(
-            name="PythonProfileChanges",
-            long_name="Shell profile updater",
-            readme="""\
-                This packages updates your shell profile to make sure that
-                the Python tools are found by your shell in preference of
-                the system provided Python tools.
+        #dict(
+        #    name="PythonDocumentation",
+        #    long_name="Python Documentation",
+        #    topdir="/Library/Frameworks/Python.framework/Versions/%(VER)s/Resources/English.lproj/Documentation",
+        #    source="/pydocs",
+        #    readme="""\
+        #        This package installs the python documentation at a location
+        #        that is usable for pydoc and IDLE.
+        #        """,
+        #    postflight="scripts/postflight.documentation",
+        #    required=False,
+        #    selected='selected',
+        #),
+        #dict(
+        #    name="PythonProfileChanges",
+        #    long_name="Shell profile updater",
+        #    readme="""\
+        #        This packages updates your shell profile to make sure that
+        #        the Python tools are found by your shell in preference of
+        #        the system provided Python tools.
 
-                If you don't install this package you'll have to add
-                "/Library/Frameworks/Python.framework/Versions/%(VER)s/bin"
-                to your PATH by hand.
-                """,
-            postflight="scripts/postflight.patch-profile",
-            topdir="/Library/Frameworks/Python.framework",
-            source="/empty-dir",
-            required=False,
-            selected='selected',
-        ),
+        #        If you don't install this package you'll have to add
+        #        "/Library/Frameworks/Python.framework/Versions/%(VER)s/bin"
+        #        to your PATH by hand.
+        #        """,
+        #    postflight="scripts/postflight.patch-profile",
+        #    topdir="/Library/Frameworks/Python.framework",
+        #    source="/empty-dir",
+        #    required=False,
+        #    selected='selected',
+        #),
         dict(
             name="PythonInstallPip",
             long_name="Install or upgrade pip",
@@ -1154,7 +1154,7 @@ def buildPython():
         shellQuote(os.path.join(SRCDIR, 'configure')),
         UNIVERSALARCHS,
         (' ', '--with-computed-gotos ')[PYTHON_3],
-        (' ', '--without-ensurepip ')[PYTHON_3],
+        (' ', '--with-ensurepip ')[PYTHON_3],
         (' ', "--with-openssl='%s/libraries/usr/local'"%(
                             shellQuote(WORKDIR)[1:-1],))[PYTHON_3],
         (' ', "--enable-optimizations --with-lto")[compilerCanOptimize()],
@@ -1737,24 +1737,24 @@ def main():
     #setIcon(folder, "../Icons/Python Folder.icns")
 
     # Create the installer
-    #buildInstaller()
+    buildInstaller()
 
     # And copy the readme into the directory containing the installer
-    #patchFile('resources/ReadMe.rtf',
-    #            os.path.join(WORKDIR, 'installer', 'ReadMe.rtf'))
+    patchFile('resources/ReadMe.rtf',
+                os.path.join(WORKDIR, 'installer', 'ReadMe.rtf'))
 
     # Ditto for the license file.
-    #patchFile('resources/License.rtf',
-    #            os.path.join(WORKDIR, 'installer', 'License.rtf'))
+    patchFile('resources/License.rtf',
+                os.path.join(WORKDIR, 'installer', 'License.rtf'))
 
-    #fp = open(os.path.join(WORKDIR, 'installer', 'Build.txt'), 'w')
-    #fp.write("# BUILD INFO\n")
-    #fp.write("# Date: %s\n" % time.ctime())
-    #fp.write("# By: %s\n" % pwd.getpwuid(os.getuid()).pw_gecos)
-    #fp.close()
+    fp = open(os.path.join(WORKDIR, 'installer', 'Build.txt'), 'w')
+    fp.write("# BUILD INFO\n")
+    fp.write("# Date: %s\n" % time.ctime())
+    fp.write("# By: %s\n" % pwd.getpwuid(os.getuid()).pw_gecos)
+    fp.close()
 
     # And copy it to a DMG
-    #buildDMG()
+    buildDMG()
 
 if __name__ == "__main__":
     main()
