@@ -1193,7 +1193,7 @@ def buildPython():
 
     make_extras = os.getenv("BUILDINSTALLER_BUILDPYTHON_MAKE_EXTRAS")
     if make_extras:
-        make_cmd = "make clean " + make_extras + runshared_for_make
+        make_cmd = "make " + make_extras + runshared_for_make
     else:
         make_cmd = "make" + runshared_for_make
     print("Running " + make_cmd)
