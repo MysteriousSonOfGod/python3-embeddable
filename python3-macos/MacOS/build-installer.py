@@ -1719,7 +1719,7 @@ def main():
     # when Sphinx and its dependencies need to
     # be (re-)installed.
     del os.environ['MACOSX_DEPLOYMENT_TARGET']
-    #buildPythonDocs()
+    buildPythonDocs()
 
 
     # Prepare the applications folder
@@ -1740,18 +1740,18 @@ def main():
     buildInstaller()
 
     # And copy the readme into the directory containing the installer
-    #patchFile('resources/ReadMe.rtf',
-    #            os.path.join(WORKDIR, 'installer', 'ReadMe.rtf'))
+    patchFile('resources/ReadMe.rtf',
+                os.path.join(WORKDIR, 'installer', 'ReadMe.rtf'))
 
     # Ditto for the license file.
-    #patchFile('resources/License.rtf',
-    #            os.path.join(WORKDIR, 'installer', 'License.rtf'))
+    patchFile('resources/License.rtf',
+                os.path.join(WORKDIR, 'installer', 'License.rtf'))
 
-    #fp = open(os.path.join(WORKDIR, 'installer', 'Build.txt'), 'w')
-    #fp.write("# BUILD INFO\n")
-    #fp.write("# Date: %s\n" % time.ctime())
-    #fp.write("# By: %s\n" % pwd.getpwuid(os.getuid()).pw_gecos)
-    #fp.close()
+    fp = open(os.path.join(WORKDIR, 'installer', 'Build.txt'), 'w')
+    fp.write("# BUILD INFO\n")
+    fp.write("# Date: %s\n" % time.ctime())
+    fp.write("# By: %s\n" % pwd.getpwuid(os.getuid()).pw_gecos)
+    fp.close()
 
     # And copy it to a DMG
     buildDMG()
