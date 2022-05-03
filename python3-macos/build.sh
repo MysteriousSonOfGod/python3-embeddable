@@ -40,13 +40,15 @@ cp ../MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript/
 pushd $PY_SRC_DIR
 
 # Runs the build-script
+pushd Mac/BuildScript/
 if [ $ARCH = "universal2" ]; then
-  python3 Mac/BuildScript/build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=12 --universal-archs=universal2
+  python3 build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=12 --universal-archs=universal2
 else
-  python3 Mac/BuildScript/build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=10.15 --universal-archs=intel-64
+  python3 build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=10.15 --universal-archs=intel-64
 fi
-
 popd
+
+popd #src
 
 # Create the embeddable dir and moves Python distribution into it
 PYSIMPLEVER=$(cut -d '.' -f 1,2 <<< "$PYVER")
