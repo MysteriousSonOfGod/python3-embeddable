@@ -274,7 +274,7 @@ def library_recipes():
         result.extend([
           dict(
               name="Tcl %s"%(tcl_tk_ver,),
-              url="ftp://ftp.tcl.tk/pub/tcl//tcl8_6/tcl%s-src.tar.gz"%(tcl_tk_ver,),
+              url="https://prdownloads.sourceforge.net/tcl/tcl%s-src.tar.gz"%(tcl_tk_ver,),
               checksum=tcl_checksum,
               buildDir="unix",
               configure_pre=[
@@ -291,7 +291,7 @@ def library_recipes():
               ),
           dict(
               name="Tk %s"%(tcl_tk_ver,),
-              url="ftp://ftp.tcl.tk/pub/tcl//tcl8_6/tk%s-src.tar.gz"%(tcl_tk_ver,),
+              url="https://prdownloads.sourceforge.net/tcl/tk%s-src.tar.gz"%(tcl_tk_ver,),
               checksum=tk_checksum,
               patches=tk_patches,
               buildDir="unix",
@@ -1723,38 +1723,38 @@ def main():
 
 
     # Prepare the applications folder
-    folder = os.path.join(WORKDIR, "_root", "Applications", "Python %s"%(
-        getVersion(),))
-    fn = os.path.join(folder, "License.rtf")
-    patchFile("resources/License.rtf",  fn)
-    fn = os.path.join(folder, "ReadMe.rtf")
-    patchFile("resources/ReadMe.rtf",  fn)
-    fn = os.path.join(folder, "Update Shell Profile.command")
-    patchScript("scripts/postflight.patch-profile",  fn)
-    fn = os.path.join(folder, "Install Certificates.command")
-    patchScript("resources/install_certificates.command",  fn)
-    os.chmod(folder, STAT_0o755)
-    setIcon(folder, "../Icons/Python Folder.icns")
+    #folder = os.path.join(WORKDIR, "_root", "Applications", "Python %s"%(
+    #    getVersion(),))
+    #fn = os.path.join(folder, "License.rtf")
+    #patchFile("resources/License.rtf",  fn)
+    #fn = os.path.join(folder, "ReadMe.rtf")
+    #patchFile("resources/ReadMe.rtf",  fn)
+    #fn = os.path.join(folder, "Update Shell Profile.command")
+    #patchScript("scripts/postflight.patch-profile",  fn)
+    #fn = os.path.join(folder, "Install Certificates.command")
+    #patchScript("resources/install_certificates.command",  fn)
+    #os.chmod(folder, STAT_0o755)
+    #setIcon(folder, "../Icons/Python Folder.icns")
 
     # Create the installer
-    buildInstaller()
+    #buildInstaller()
 
     # And copy the readme into the directory containing the installer
-    patchFile('resources/ReadMe.rtf',
-                os.path.join(WORKDIR, 'installer', 'ReadMe.rtf'))
+    #patchFile('resources/ReadMe.rtf',
+    #            os.path.join(WORKDIR, 'installer', 'ReadMe.rtf'))
 
     # Ditto for the license file.
-    patchFile('resources/License.rtf',
-                os.path.join(WORKDIR, 'installer', 'License.rtf'))
+    #patchFile('resources/License.rtf',
+    #            os.path.join(WORKDIR, 'installer', 'License.rtf'))
 
-    fp = open(os.path.join(WORKDIR, 'installer', 'Build.txt'), 'w')
-    fp.write("# BUILD INFO\n")
-    fp.write("# Date: %s\n" % time.ctime())
-    fp.write("# By: %s\n" % pwd.getpwuid(os.getuid()).pw_gecos)
-    fp.close()
+    #fp = open(os.path.join(WORKDIR, 'installer', 'Build.txt'), 'w')
+    #fp.write("# BUILD INFO\n")
+    #fp.write("# Date: %s\n" % time.ctime())
+    #fp.write("# By: %s\n" % pwd.getpwuid(os.getuid()).pw_gecos)
+    #fp.close()
 
     # And copy it to a DMG
-    buildDMG()
+    #buildDMG()
 
 if __name__ == "__main__":
     main()
