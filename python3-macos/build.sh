@@ -49,9 +49,9 @@ pushd $PY_SRC_DIR
 
 # Runs the build-script
 if [ $ARCH = "universal2" ]; then
-  python3 Mac/BuildScript/build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=10.6 --universal-archs=universal2
+  python3 Mac/BuildScript/build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=10.15 --universal-archs=universal2
 else
-  python3 Mac/BuildScript/build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=10.6 --universal-archs=intel-64
+  python3 Mac/BuildScript/build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=10.15 --universal-archs=intel-64
 fi
 
 popd
