@@ -39,7 +39,7 @@ cp ../MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript/
 
 pushd $PY_SRC_DIR
 
-#BUILDINSTALLER_BUILDPYTHON_MAKE_EXTRAS="clean"
+BUILDINSTALLER_BUILDPYTHON_MAKE_EXTRAS="clean"
 
 # Runs the build-script
 if [ $ARCH = "universal2" ]; then
