@@ -274,7 +274,7 @@ def library_recipes():
         result.extend([
           dict(
               name="Tcl %s"%(tcl_tk_ver,),
-              url="https://prdownloads.sourceforge.net/tcl/tcl%s-src.tar.gz"%(tcl_tk_ver,),
+              url="ftp://ftp.tcl.tk/pub/tcl//tcl8_6/tcl%s-src.tar.gz"%(tcl_tk_ver,),
               checksum=tcl_checksum,
               buildDir="unix",
               configure_pre=[
@@ -291,7 +291,7 @@ def library_recipes():
               ),
           dict(
               name="Tk %s"%(tcl_tk_ver,),
-              url="https://prdownloads.sourceforge.net/tcl/tk%s-src.tar.gz"%(tcl_tk_ver,),
+              url="ftp://ftp.tcl.tk/pub/tcl//tcl8_6/tk%s-src.tar.gz"%(tcl_tk_ver,),
               checksum=tk_checksum,
               patches=tk_patches,
               buildDir="unix",
@@ -358,9 +358,9 @@ def library_recipes():
                   ),
           ),
           dict(
-              name="SQLite 3.37.2",
-              url="https://sqlite.org/2022/sqlite-autoconf-3370200.tar.gz",
-              checksum='683cc5312ee74e71079c14d24b7a6d27',
+              name="SQLite 3.38.1",
+              url="https://sqlite.org/2022/sqlite-autoconf-3380100.tar.gz",
+              checksum="5af57892dc0993af596bef56931db23f",
               extra_cflags=('-Os '
                             '-DSQLITE_ENABLE_FTS5 '
                             '-DSQLITE_ENABLE_FTS4 '
@@ -466,7 +466,7 @@ def pkg_recipes():
                 This packages updates your shell profile to make sure that
                 the Python tools are found by your shell in preference of
                 the system provided Python tools.
-        
+
                 If you don't install this package you'll have to add
                 "/Library/Frameworks/Python.framework/Versions/%(VER)s/bin"
                 to your PATH by hand.
@@ -728,6 +728,10 @@ def extractArchive(builddir, archiveName):
             if ((retval.startswith('tcl') or retval.startswith('tk'))
                     and retval.endswith('-src')):
                 retval = retval[:-4]
+                # Strip rcxx suffix from Tcl/Tk release candidates
+                retval_rc = retval.find('rc')
+                if retval_rc > 0:
+                    retval = retval[:retval_rc]
             if os.path.exists(retval):
                 shutil.rmtree(retval)
             fp = os.popen("tar zxf %s 2>&1"%(shellQuote(archiveName),), 'r')
@@ -1150,14 +1154,14 @@ def buildPython():
         shellQuote(os.path.join(SRCDIR, 'configure')),
         UNIVERSALARCHS,
         (' ', '--with-computed-gotos ')[PYTHON_3],
-        (' ', '--with-ensurepip ')[PYTHON_3], 
+        (' ', '--without-ensurepip ')[PYTHON_3],
         (' ', "--with-openssl='%s/libraries/usr/local'"%(
                             shellQuote(WORKDIR)[1:-1],))[PYTHON_3],
-        (' ', "--with-tcltk-includes='-I%s/libraries/usr/local/include'"%(
-                            shellQuote(WORKDIR)[1:-1],))[internalTk()],
-        (' ', "--with-tcltk-libs='-L%s/libraries/usr/local/lib -ltcl8.6 -ltk8.6'"%(
-                            shellQuote(WORKDIR)[1:-1],))[internalTk()],
         (' ', "--enable-optimizations --with-lto")[compilerCanOptimize()],
+        (' ', "TCLTK_CFLAGS='-I%s/libraries/usr/local/include'"%(
+                            shellQuote(WORKDIR)[1:-1],))[internalTk()],
+        (' ', "TCLTK_LIBS='-L%s/libraries/usr/local/lib -ltcl8.6 -ltk8.6'"%(
+                            shellQuote(WORKDIR)[1:-1],))[internalTk()],
         shellQuote(WORKDIR)[1:-1],
         shellQuote(WORKDIR)[1:-1]))
 
@@ -1197,7 +1201,6 @@ def buildPython():
     else:
         make_cmd = "make" + runshared_for_make
     print("Running " + make_cmd)
-    runCommand("make clean")
     runCommand(make_cmd)
 
     make_cmd = "make install DESTDIR=%s %s"%(
@@ -1688,7 +1691,6 @@ def setIcon(filePath, icnsPath):
     runCommand("%s %s %s"%(shellQuote(os.path.abspath(toolPath)), shellQuote(icnsPath),
         shellQuote(filePath)))
 
-
 def main():
     # First parse options and check if we can perform our work
     parseOptions()
@@ -1717,42 +1719,42 @@ def main():
     # when Sphinx and its dependencies need to
     # be (re-)installed.
     del os.environ['MACOSX_DEPLOYMENT_TARGET']
-    #buildPythonDocs()
+    buildPythonDocs()
 
 
     # Prepare the applications folder
-    #folder = os.path.join(WORKDIR, "_root", "Applications", "Python %s"%(
-    #    getVersion(),))
-    #fn = os.path.join(folder, "License.rtf")
-    #patchFile("resources/License.rtf",  fn)
-    #fn = os.path.join(folder, "ReadMe.rtf")
-    #patchFile("resources/ReadMe.rtf",  fn)
-    #fn = os.path.join(folder, "Update Shell Profile.command")
-    #patchScript("scripts/postflight.patch-profile",  fn)
-    #fn = os.path.join(folder, "Install Certificates.command")
-    #patchScript("resources/install_certificates.command",  fn)
-    #os.chmod(folder, STAT_0o755)
-    #setIcon(folder, "../Icons/Python Folder.icns")
+    folder = os.path.join(WORKDIR, "_root", "Applications", "Python %s"%(
+        getVersion(),))
+    fn = os.path.join(folder, "License.rtf")
+    patchFile("resources/License.rtf",  fn)
+    fn = os.path.join(folder, "ReadMe.rtf")
+    patchFile("resources/ReadMe.rtf",  fn)
+    fn = os.path.join(folder, "Update Shell Profile.command")
+    patchScript("scripts/postflight.patch-profile",  fn)
+    fn = os.path.join(folder, "Install Certificates.command")
+    patchScript("resources/install_certificates.command",  fn)
+    os.chmod(folder, STAT_0o755)
+    setIcon(folder, "../Icons/Python Folder.icns")
 
     # Create the installer
-    #buildInstaller()
+    buildInstaller()
 
     # And copy the readme into the directory containing the installer
-    #patchFile('resources/ReadMe.rtf',
-    #            os.path.join(WORKDIR, 'installer', 'ReadMe.rtf'))
+    patchFile('resources/ReadMe.rtf',
+                os.path.join(WORKDIR, 'installer', 'ReadMe.rtf'))
 
     # Ditto for the license file.
-    #patchFile('resources/License.rtf',
-    #            os.path.join(WORKDIR, 'installer', 'License.rtf'))
+    patchFile('resources/License.rtf',
+                os.path.join(WORKDIR, 'installer', 'License.rtf'))
 
-    #fp = open(os.path.join(WORKDIR, 'installer', 'Build.txt'), 'w')
-    #fp.write("# BUILD INFO\n")
-    #fp.write("# Date: %s\n" % time.ctime())
-    #fp.write("# By: %s\n" % pwd.getpwuid(os.getuid()).pw_gecos)
-    #fp.close()
+    fp = open(os.path.join(WORKDIR, 'installer', 'Build.txt'), 'w')
+    fp.write("# BUILD INFO\n")
+    fp.write("# Date: %s\n" % time.ctime())
+    fp.write("# By: %s\n" % pwd.getpwuid(os.getuid()).pw_gecos)
+    fp.close()
 
     # And copy it to a DMG
-    #buildDMG()
+    buildDMG()
 
 if __name__ == "__main__":
     main()
