@@ -9,9 +9,6 @@ gcc --version
 
 sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
 
-sudo port select clang none
-sudo port select llvm none
-
 if [ $ARCH = "x86_64" ] || [ $ARCH = "universal2" ]; then
     echo "Building Python for $ARCH"
     mkdir $ARCH    
