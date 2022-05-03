@@ -1144,7 +1144,7 @@ def buildPython():
                "%s "
                "%s "
                "%s "
-               #"%s "
+               "%s "
                "LDFLAGS='-g -L%s/libraries/usr/local/lib' "
                "CFLAGS='-g -I%s/libraries/usr/local/include' 2>&1"%(
         shellQuote(os.path.join(SRCDIR, 'configure')),
