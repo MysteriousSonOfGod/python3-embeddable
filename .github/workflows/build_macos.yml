@@ -58,7 +58,6 @@ jobs:
         if-no-files-found: error
 
   build_macos_universal2:
-    #if: 1 == 2
     runs-on: macos-latest
     defaults:
       run:
