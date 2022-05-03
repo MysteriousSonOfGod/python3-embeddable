@@ -51,4 +51,4 @@ popd
 # Create the embeddable dir and moves Python distribution into it
 PYSIMPLEVER=$(cut -d '.' -f 1,2 <<< "$PYVER")
 mkdir -p embedabble
-mv "build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER/*" embedabble
+mv "$THIS_DIR/build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER/*" embedabble
