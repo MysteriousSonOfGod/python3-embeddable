@@ -1719,7 +1719,7 @@ def main():
     # when Sphinx and its dependencies need to
     # be (re-)installed.
     del os.environ['MACOSX_DEPLOYMENT_TARGET']
-    buildPythonDocs()
+    #buildPythonDocs()
 
 
     # Prepare the applications folder
