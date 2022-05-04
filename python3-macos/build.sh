@@ -3,6 +3,10 @@
 set -e
 set -x
 
+brew list gettext
+
+brew uninstall gettext
+
 if [ $ARCH = "x86_64" ] || [ $ARCH = "universal2" ]; then
     echo "Building Python for $ARCH"
     mkdir $ARCH    
