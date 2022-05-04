@@ -52,11 +52,5 @@ popd
 PYSIMPLEVER=$(cut -d '.' -f 1,2 <<< "$PYVER")
 mkdir -p embedabble
 
-ls -l
-
-if [ -d "build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER" ]; then echo "framework not found"; fi
-if [ -d embedabble ]; then echo "embeddable not found"; fi
-
-PYFILES="build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER"
-
-mv -v "build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER/*" embedabble
+cd "build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER"
+mv -v * "$THIS_DIR/embedabble/"
