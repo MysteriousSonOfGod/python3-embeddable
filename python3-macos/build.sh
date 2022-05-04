@@ -39,8 +39,6 @@ mv -f -v ../MacOS/Makefile $PY_SRC_DIR/Doc/
 
 pushd $PY_SRC_DIR/Mac/BuildScript/
 
-brew uninstall --ignore-dependencies gettext
-
 # Runs the build-script
 if [ $ARCH = "universal2" ]; then
   python3 build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=12 --universal-archs=universal2
