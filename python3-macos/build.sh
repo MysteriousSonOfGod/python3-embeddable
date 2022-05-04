@@ -39,21 +39,18 @@ rm -f $PY_SRC_DIR/Doc/Makefile
 cp ../MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript/
 cp ../MacOS/Makefile $PY_SRC_DIR/Doc/
 
-pushd $PY_SRC_DIR
+pushd $PY_SRC_DIR/Mac/BuildScript/
 
 # Runs the build-script
-pushd Mac/BuildScript/
 if [ $ARCH = "universal2" ]; then
   python3 build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=12 --universal-archs=universal2
 else
   python3 build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=10.15 --universal-archs=intel-64
 fi
-popd
 
-popd #src
+popd
 
 # Create the embeddable dir and moves Python distribution into it
 PYSIMPLEVER=$(cut -d '.' -f 1,2 <<< "$PYVER")
 mkdir -p embedabble
-ls -R
-mv "build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER/*" embedabble
+mv -v "$THIS_DIR/build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER/*" "$THIS_DIR/embedabble/"
