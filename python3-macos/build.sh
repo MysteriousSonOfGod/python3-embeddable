@@ -57,4 +57,6 @@ ls -l
 if [ -d "build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER" ]; then echo "framework not found"; fi
 if [ -d embedabble ]; then echo "embeddable not found"; fi
 
-mv -v build/* embedabble
+PYFILES="build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER"
+
+mv -v "build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER/*" embedabble
