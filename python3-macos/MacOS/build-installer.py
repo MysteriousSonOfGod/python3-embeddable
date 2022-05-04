@@ -1146,7 +1146,7 @@ def buildPython():
                "%s "
                "%s "
                "%s "
-               "%s "
+               #"%s "
                "%s "
                "%s "
                "LDFLAGS='-g -L%s/libraries/usr/local/lib' "
@@ -1157,7 +1157,7 @@ def buildPython():
         (' ', '--with-ensurepip ')[PYTHON_3],
         (' ', "--with-openssl='%s/libraries/usr/local'"%(
                             shellQuote(WORKDIR)[1:-1],))[PYTHON_3],
-        (' ', "--enable-optimizations --with-lto")[compilerCanOptimize()],
+        #(' ', "--enable-optimizations --with-lto")[compilerCanOptimize()],
         (' ', "TCLTK_CFLAGS='-I%s/libraries/usr/local/include'"%(
                             shellQuote(WORKDIR)[1:-1],))[internalTk()],
         (' ', "TCLTK_LIBS='-L%s/libraries/usr/local/lib -ltcl8.6 -ltk8.6'"%(
