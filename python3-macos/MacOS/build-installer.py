@@ -446,19 +446,19 @@ def pkg_recipes():
             required=False,
             selected='selected',
         ),
-        dict(
-            name="PythonDocumentation",
-            long_name="Python Documentation",
-            topdir="/Library/Frameworks/Python.framework/Versions/%(VER)s/Resources/English.lproj/Documentation",
-            source="/pydocs",
-            readme="""\
-                This package installs the python documentation at a location
-                that is usable for pydoc and IDLE.
-                """,
-            postflight="scripts/postflight.documentation",
-            required=False,
-            selected='selected',
-        ),
+        #dict(
+        #    name="PythonDocumentation",
+        #    long_name="Python Documentation",
+        #    topdir="/Library/Frameworks/Python.framework/Versions/%(VER)s/Resources/English.lproj/Documentation",
+        #    source="/pydocs",
+        #    readme="""\
+        #        This package installs the python documentation at a location
+        #        that is usable for pydoc and IDLE.
+        #        """,
+        #    postflight="scripts/postflight.documentation",
+        #    required=False,
+        #    selected='selected',
+        #),
         dict(
             name="PythonProfileChanges",
             long_name="Shell profile updater",
@@ -1719,7 +1719,7 @@ def main():
     # when Sphinx and its dependencies need to
     # be (re-)installed.
     del os.environ['MACOSX_DEPLOYMENT_TARGET']
-    buildPythonDocs()
+    #buildPythonDocs()
 
 
     # Prepare the applications folder
