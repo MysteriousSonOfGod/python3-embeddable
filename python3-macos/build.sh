@@ -3,10 +3,6 @@
 set -e
 set -x
 
-brew list gettext
-
-brew uninstall gettext
-
 if [ $ARCH = "x86_64" ] || [ $ARCH = "universal2" ]; then
     echo "Building Python for $ARCH"
     mkdir $ARCH    
@@ -42,6 +38,8 @@ mv -f -v ../MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript/
 mv -f -v ../MacOS/Makefile $PY_SRC_DIR/Doc/
 
 pushd $PY_SRC_DIR/Mac/BuildScript/
+
+brew uninstall --ignore-dependencies gettext
 
 # Runs the build-script
 if [ $ARCH = "universal2" ]; then
