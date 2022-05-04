@@ -53,4 +53,5 @@ PYSIMPLEVER=$(cut -d '.' -f 1,2 <<< "$PYVER")
 mkdir -p embedabble
 
 cd "build/_root/Library/Frameworks/Python.framework/Versions/$PYSIMPLEVER"
+rm -rf Resources
 mv -v * "$THIS_DIR/embedabble/"
