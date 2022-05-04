@@ -1053,7 +1053,7 @@ def buildRecipe(recipe, basedir, archList):
     print("")
 
     os.chdir(curdir)
-
+    
 def buildLibraries():
     """
     Build our dependencies into $WORKDIR/libraries/usr/local
@@ -1197,9 +1197,9 @@ def buildPython():
 
     make_extras = os.getenv("BUILDINSTALLER_BUILDPYTHON_MAKE_EXTRAS")
     if make_extras:
-        make_cmd = "make " + make_extras + runshared_for_make
+        make_cmd = "make " + make_extras + runshared_for_make + " -DWITH_TRANSLATIONS=OFF -DWITH_GETTEXT=OFF"
     else:
-        make_cmd = "make" + runshared_for_make
+        make_cmd = "make" + runshared_for_make + " -DWITH_TRANSLATIONS=OFF -DWITH_GETTEXT=OFF"
     print("Running " + make_cmd)
     runCommand(make_cmd)
 
