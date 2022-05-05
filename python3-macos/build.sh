@@ -34,7 +34,7 @@ popd
 # ---------------- #
 
 # Create the pre-built directory by extracting the zip file
-mv -f -v ../MacOS/prebuiltdeps.tar.gz "$THIS_DIR/build"
+mv -f -v ../MacOS/prebuiltdeps.tar.gz "$THIS_DIR/build/prebuiltdeps.tar.gz"
 ls -R
 tar --no-same-owner -xf "$THIS_DIR/build/prebuiltdeps.tar.gz"
 
