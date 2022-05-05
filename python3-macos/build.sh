@@ -26,8 +26,8 @@ mkdir -p src
 pushd src
 
 # Download Python
-#curl -vLO https://www.python.org/ftp/python/$PYVER/Python-$PYVER.tar.xz
-#tar --no-same-owner -xf Python-$PYVER.tar.xz
+curl -vLO https://www.python.org/ftp/python/$PYVER/Python-$PYVER.tar.xz
+tar --no-same-owner -xf Python-$PYVER.tar.xz
 
 popd
 
@@ -36,7 +36,6 @@ popd
 # Create the pre-built directory by extracting the zip file
 mv -f ../MacOS/prebuiltdeps.tar.gz $THIS_DIR
 tar --no-same-owner -xf $THIS_DIR/prebuiltdeps.tar.gz
-ls $THIS_DIR
 
 # Copy our custom build-script to the BuildScript folder
 mv -f -v ../MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript/
