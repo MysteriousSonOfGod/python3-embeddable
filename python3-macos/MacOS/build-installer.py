@@ -233,9 +233,6 @@ def tweak_tcl_build(basedir, archList):
     with open("Makefile", "w") as fp:
         fp.writelines(new_contents)
 
-def internalGettext():
-    return true
-
 # List of names of third party software built with this installer.
 # The names will be inserted into the rtf version of the License.
 THIRD_PARTY_LIBS = []
@@ -315,20 +312,6 @@ def library_recipes():
                   "TK_LIBRARY": shellQuote('/Library/Frameworks/Python.framework/Versions/%s/lib/tk8.6'%(getVersion())),
                   },
                 ),
-        ])
-
-    if internalGettext():
-        gettext_ver='0.21'
-        gettext_checksum='28b1cd4c94a74428723ed966c38cf479'
-
-        result.extend([
-          dict(
-              name="Gettext %s"%(gettext_ver,),
-              url="https://ftp.gnu.org/pub/gnu/gettext/gettext-%s.tar.gz"%(gettext_ver,),
-              buildrecipe=build_universal_gettext,
-              configure=None,
-              install=None,
-              ),
         ])
 
 
@@ -962,12 +945,6 @@ def build_universal_openssl(basedir, archList):
 
     return
 
-    def build_universal_gettext(basedir, archList):
-    """
-    Special case build recipe for universal build of gettext.
-    """
-
-    no_asm = int(platform.release().split(".")[0]) < 9
 
     def build_openssl_arch(archbase, arch):
         "Build one architecture of openssl"
@@ -1366,9 +1343,9 @@ def buildPython():
 
     make_extras = os.getenv("BUILDINSTALLER_BUILDPYTHON_MAKE_EXTRAS")
     if make_extras:
-        make_cmd = "make " + make_extras + runshared_for_make + " -DWITH_TRANSLATIONS=OFF -DWITH_GETTEXT=OFF"
+        make_cmd = "make " + make_extras + runshared_for_make
     else:
-        make_cmd = "make" + runshared_for_make + " -DWITH_TRANSLATIONS=OFF -DWITH_GETTEXT=OFF"
+        make_cmd = "make" + runshared_for_make
     print("Running " + make_cmd)
     runCommand(make_cmd)
 
