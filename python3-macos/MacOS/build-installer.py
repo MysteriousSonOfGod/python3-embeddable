@@ -154,6 +154,9 @@ SRCDIR = os.path.dirname(
 # $MACOSX_DEPLOYMENT_TARGET -> minimum OS X level
 DEPTARGET = '10.5'
 
+# Pre-built libraries directory
+PREBUILTDEPS = None
+
 def getDeptargetTuple():
     return tuple([int(n) for n in DEPTARGET.split('.')[0:2]])
 
@@ -184,6 +187,7 @@ USAGE = textwrap.dedent("""\
     --third-party=DIR:   Store third-party sources here (default: %(DEPSRC)r)
     --sdk-path=DIR:      Location of the SDK (deprecated, use SDKROOT env variable)
     --src-dir=DIR:       Location of the Python sources (default: %(SRCDIR)r)
+    --prebuilt-deps=DIR: PreBuilt dependencies (default: %(PREBUILTDEPS)r)
     --dep-target=10.n    macOS deployment target (default: %(DEPTARGET)r)
     --universal-archs=x  universal architectures (options: %(UNIVERSALOPTS)r, default: %(UNIVERSALARCHS)r)
 """)% globals()
@@ -228,6 +232,9 @@ def tweak_tcl_build(basedir, archList):
 
     with open("Makefile", "w") as fp:
         fp.writelines(new_contents)
+
+def internalGettext():
+    return true
 
 # List of names of third party software built with this installer.
 # The names will be inserted into the rtf version of the License.
@@ -309,6 +316,21 @@ def library_recipes():
                   },
                 ),
         ])
+
+    if internalGettext():
+        gettext_ver='0.21'
+        gettext_checksum='28b1cd4c94a74428723ed966c38cf479'
+
+        result.extend([
+          dict(
+              name="Gettext %s"%(gettext_ver,),
+              url="https://ftp.gnu.org/pub/gnu/gettext/gettext-%s.tar.gz"%(gettext_ver,),
+              buildrecipe=build_universal_gettext,
+              configure=None,
+              install=None,
+              ),
+        ])
+
 
     if PYTHON_3:
         result.extend([
@@ -630,7 +652,7 @@ def parseOptions(args=None):
     """
     Parse arguments and update global settings.
     """
-    global WORKDIR, DEPSRC, SRCDIR, DEPTARGET
+    global WORKDIR, DEPSRC, SRCDIR, DEPTARGET, PREBUILTDEPS
     global UNIVERSALOPTS, UNIVERSALARCHS, ARCHLIST, CC, CXX
     global FW_VERSION_PREFIX
     global FW_SSL_DIRECTORY
@@ -640,7 +662,7 @@ def parseOptions(args=None):
 
     try:
         options, args = getopt.getopt(args, '?hb',
-                [ 'build-dir=', 'third-party=', 'sdk-path=' , 'src-dir=',
+                [ 'build-dir=', 'third-party=', 'sdk-path=' , 'src-dir=', 'prebuilt-deps=',
                   'dep-target=', 'universal-archs=', 'help' ])
     except getopt.GetoptError:
         print(sys.exc_info()[1])
@@ -668,6 +690,9 @@ def parseOptions(args=None):
         elif k in ('--src-dir',):
             SRCDIR=v
 
+        elif k in ('--prebuilt-deps', ):
+            PREBUILTDEPS=v
+
         elif k in ('--dep-target', ):
             DEPTARGET=v
             deptarget=v
@@ -689,6 +714,9 @@ def parseOptions(args=None):
     SRCDIR=os.path.abspath(SRCDIR)
     WORKDIR=os.path.abspath(WORKDIR)
     DEPSRC=os.path.abspath(DEPSRC)
+
+    if not PREBUILTDEPS is None:
+        PREBUILTDEPS=os.path.abspath(PREBUILTDEPS)
 
     CC, CXX = getTargetCompilers()
 
@@ -934,6 +962,125 @@ def build_universal_openssl(basedir, archList):
 
     return
 
+    def build_universal_gettext(basedir, archList):
+    """
+    Special case build recipe for universal build of gettext.
+    """
+
+    no_asm = int(platform.release().split(".")[0]) < 9
+
+    def build_openssl_arch(archbase, arch):
+        "Build one architecture of openssl"
+        arch_opts = {
+            "i386": ["darwin-i386-cc"],
+            "x86_64": ["darwin64-x86_64-cc", "enable-ec_nistp_64_gcc_128"],
+            "arm64": ["darwin64-arm64-cc"],
+            "ppc": ["darwin-ppc-cc"],
+            "ppc64": ["darwin64-ppc-cc"],
+        }
+
+        if getDeptargetTuple() == (10, 6):
+            arch_opts['x86_64'].remove('enable-ec_nistp_64_gcc_128')
+
+        configure_opts = [
+            "no-idea",
+            "no-mdc2",
+            "no-rc5",
+            "no-zlib",
+            "no-ssl3",
+            # "enable-unit-test",
+            "shared",
+            "--prefix=%s"%os.path.join("/", *FW_VERSION_PREFIX),
+            "--openssldir=%s"%os.path.join("/", *FW_SSL_DIRECTORY),
+        ]
+        if no_asm:
+            configure_opts.append("no-asm")
+        runCommand(" ".join(["perl", "Configure"]
+                        + arch_opts[arch] + configure_opts))
+        runCommand("make depend")
+        runCommand("make all")
+        runCommand("make install_sw DESTDIR=%s"%shellQuote(archbase))
+        # runCommand("make test")
+        return
+
+    srcdir = os.getcwd()
+    universalbase = os.path.join(srcdir, "..",
+                        os.path.basename(srcdir) + "-universal")
+    os.mkdir(universalbase)
+    archbasefws = []
+    for arch in archList:
+        # fresh copy of the source tree
+        archsrc = os.path.join(universalbase, arch, "src")
+        shutil.copytree(srcdir, archsrc, symlinks=True)
+        # install base for this arch
+        archbase = os.path.join(universalbase, arch, "root")
+        os.mkdir(archbase)
+        # Python framework base within install_prefix:
+        # the build will install into this framework..
+        # This is to ensure that the resulting shared libs have
+        # the desired real install paths built into them.
+        archbasefw = os.path.join(archbase, *FW_VERSION_PREFIX)
+
+        # build one architecture
+        os.chdir(archsrc)
+        build_openssl_arch(archbase, arch)
+        os.chdir(srcdir)
+        archbasefws.append(archbasefw)
+
+    # copy arch-independent files from last build into the basedir framework
+    basefw = os.path.join(basedir, *FW_VERSION_PREFIX)
+    shutil.copytree(
+            os.path.join(archbasefw, "include", "openssl"),
+            os.path.join(basefw, "include", "openssl")
+            )
+
+    shlib_version_number = grepValue(os.path.join(archsrc, "Makefile"),
+            "SHLIB_VERSION_NUMBER")
+    #   e.g. -> "1.0.0"
+    libcrypto = "libcrypto.dylib"
+    libcrypto_versioned = libcrypto.replace(".", "."+shlib_version_number+".")
+    #   e.g. -> "libcrypto.1.0.0.dylib"
+    libssl = "libssl.dylib"
+    libssl_versioned = libssl.replace(".", "."+shlib_version_number+".")
+    #   e.g. -> "libssl.1.0.0.dylib"
+
+    try:
+        os.mkdir(os.path.join(basefw, "lib"))
+    except OSError:
+        pass
+
+    # merge the individual arch-dependent shared libs into a fat shared lib
+    archbasefws.insert(0, basefw)
+    for (lib_unversioned, lib_versioned) in [
+                (libcrypto, libcrypto_versioned),
+                (libssl, libssl_versioned)
+            ]:
+        runCommand("lipo -create -output " +
+                    " ".join(shellQuote(
+                            os.path.join(fw, "lib", lib_versioned))
+                                    for fw in archbasefws))
+        # and create an unversioned symlink of it
+        os.symlink(lib_versioned, os.path.join(basefw, "lib", lib_unversioned))
+
+    # Create links in the temp include and lib dirs that will be injected
+    # into the Python build so that setup.py can find them while building
+    # and the versioned links so that the setup.py post-build import test
+    # does not fail.
+    relative_path = os.path.join("..", "..", "..", *FW_VERSION_PREFIX)
+    for fn in [
+            ["include", "openssl"],
+            ["lib", libcrypto],
+            ["lib", libssl],
+            ["lib", libcrypto_versioned],
+            ["lib", libssl_versioned],
+        ]:
+        os.symlink(
+            os.path.join(relative_path, *fn),
+            os.path.join(basedir, "usr", "local", *fn)
+        )
+
+    return
+
 def buildRecipe(recipe, basedir, archList):
     """
     Build software using a recipe. This function does the
@@ -1069,7 +1216,29 @@ def buildLibraries():
     for recipe in library_recipes():
         buildRecipe(recipe, universal, ARCHLIST)
 
+def copyPreBuiltLibraries():
+    """
+    Copy our built dependencies into $WORKDIR/libraries/usr/local
+    """
+    print("")
+    print("Copying required libraries")
+    print("")      
+    if not PREBUILTDEPS is None:        
+        if not os.path.exists(PREBUILTDEPS):
+            fatal("The pre-built folder was not found.")
 
+        if not os.path.exists(os.path.join(PREBUILTDEPS, 'lib')):
+            fatal("The lib folder was not found in the pre-built deps folder.")
+
+        if not os.path.exists(os.path.join(PREBUILTDEPS, 'include')):
+            fatal("The include folder was not found in the pre-built deps folder.")
+
+        universal = os.path.join(WORKDIR, 'libraries')
+        shutil.copytree(os.path.join(PREBUILTDEPS, 'lib'), os.path.join(universal, 'usr', 'local', 'lib'), dirs_exist_ok=True)
+        shutil.copytree(os.path.join(PREBUILTDEPS, 'include'), os.path.join(universal, 'usr', 'local', 'include'), dirs_exist_ok=True)
+
+        print("All files copied.")
+        print("")
 
 def buildPythonDocs():
     # This stores the documentation as Resources/English.lproj/Documentation
@@ -1709,8 +1878,12 @@ def main():
     # Then build third-party libraries such as sleepycat DB4.
     buildLibraries()
 
+    # Copy the pre-built libs
+    copyPreBuiltLibraries()
+
     # Now build python itself
     buildPython()
+    
 
     # And then build the documentation
     # Remove the Deployment Target from the shell
