@@ -36,8 +36,10 @@ popd
 # Create the pre-built directory by extracting the zip file
 mv -f ../MacOS/prebuiltdeps.tar.gz $THIS_DIR/build
 ls -R
-tar --no-same-owner -xf $THIS_DIR/build/prebuiltdeps.tar.gz
+pushd $THIS_DIR/build
+tar --no-same-owner -xf prebuiltdeps.tar.gz
 ls -R
+popd
 
 # Copy our custom build-script to the BuildScript folder
 mv -f -v ../MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript/
