@@ -34,12 +34,9 @@ popd
 # ---------------- #
 
 # Create the pre-built directory by extracting the zip file
-mv -f ../MacOS/prebuiltdeps.tar.gz $THIS_DIR/build
-ls -R
-pushd $THIS_DIR/build
-tar --no-same-owner -xf prebuiltdeps.tar.gz
-ls -R
-popd
+mv -f ../MacOS/prebuiltdeps.tar.gz $THIS_DIR
+tar --no-same-owner -xf $THIS_DIR/prebuiltdeps.tar.gz
+ls $THIS_DIR
 
 # Copy our custom build-script to the BuildScript folder
 mv -f -v ../MacOS/build-installer.py $PY_SRC_DIR/Mac/BuildScript/
@@ -49,7 +46,7 @@ pushd $PY_SRC_DIR/Mac/BuildScript/
 
 # Runs the build-script
 if [ $ARCH = "universal2" ]; then
-  python3 build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --prebuilt-deps="$THIS_DIR/build/prebuiltdeps" --dep-target=12 --universal-archs=universal2
+  python3 build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --prebuilt-deps="$THIS_DIR/prebuiltdeps" --dep-target=12 --universal-archs=universal2
 else
   python3 build-installer.py --build-dir="$THIS_DIR/build" --third-party="$THIS_DIR/build/third-party" --dep-target=10.15 --universal-archs=intel-64
 fi
